@@ -2,23 +2,16 @@
 #define FTSQ_MUTEX_H
 
 #include "ftsq/mutex.h"
-#ifdef FTSQ_POP_ALL
 #  include <vector>
-#else
 #  include <deque>
-#endif // FTSQ_POP_ALL
 
 namespace ftsq
 {
     template <typename T, typename mutex_type=ftsq::mutex>
-    class fast_queue
+    class queue_pop_one
     {
     public:
-#ifdef FTSQ_POP_ALL
-        typedef std::vector<T> queue_type;
-#else
         typedef std::deque<T> queue_type;
-#endif
         typedef typename queue_type::size_type size_type;
 
         size_type push(T item)
@@ -28,13 +21,6 @@ namespace ftsq
             return m_queue.size();
         }
 
-#ifdef FTSQ_POP_ALL
-        queue_type pop_all()
-        {
-            std::lock_guard<mutex_type> guard(m_mutex);
-            return std::move(m_queue);
-        }
-#else
         bool pop(T& item)
         {
             std::lock_guard<mutex_type> guard(m_mutex);
@@ -46,15 +32,43 @@ namespace ftsq
             m_queue.pop_front();
             return true;
         }
-#endif
 
-        fast_queue() {}
+        queue_pop_one() {}
         // disable object copy
-        fast_queue(const fast_queue&) = delete;
-        void operator=(const fast_queue&) = delete;
+        queue_pop_one(const queue_pop_one&) = delete;
+        void operator=(const queue_pop_one&) = delete;
     private:
         mutex_type m_mutex;
         queue_type m_queue;
-    }; //class mutex
+    }; //class queue_pop_one
+
+    template <typename T, typename mutex_type=ftsq::mutex>
+    class queue_pop_all
+    {
+    public:
+        typedef std::vector<T> queue_type;
+        typedef typename queue_type::size_type size_type;
+
+        size_type push(T item)
+        {
+            std::lock_guard<mutex_type> guard(m_mutex);
+            m_queue.push_back(std::move(item));
+            return m_queue.size();
+        }
+
+        queue_type pop_all()
+        {
+            std::lock_guard<mutex_type> guard(m_mutex);
+            return std::move(m_queue);
+        }
+
+        queue_pop_all() {}
+        // disable object copy
+        queue_pop_all(const queue_pop_all&) = delete;
+        void operator=(const queue_pop_all&) = delete;
+    private:
+        mutex_type m_mutex;
+        queue_type m_queue;
+    }; //class queue_pop_all
 }
 #endif // FTSQ_MUTEX_H
