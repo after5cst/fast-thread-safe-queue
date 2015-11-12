@@ -9,7 +9,7 @@ namespace ftsq
     class mutex
     {
     public:
-        mutex() : m_count(0), m_mutex() {}
+        mutex() : m_count(0), m_mutex() { m_mutex.lock(); }
         mutex(const mutex&) = delete;
         void operator=(const mutex&) = delete;
 
