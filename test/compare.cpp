@@ -84,21 +84,30 @@ template <typename T> void producer_all()
 
 int main()
 {
-    auto stdmutex_duration = ftsq::measure<>::execution(
+    auto duration = ftsq::measure<>::execution(
                 producer_one<ftsq::queue_pop_one<int,std::mutex> >);
-    std::cout << "ONE-> std::mutex " << stdmutex_duration << " ms" << std::endl;
+    std::cout << "ONE-> std::mutex " << duration << " ms" << std::endl;
 
-    auto ftsqmutex_duration = ftsq::measure<>::execution(
-                producer_one<ftsq::queue_pop_one<int,std::mutex> >);
-    std::cout << "ONE-> ftsq::mutex " << ftsqmutex_duration << " ms" << std::endl;
+    duration = ftsq::measure<>::execution(
+                producer_one<ftsq::queue_pop_one<int,ftsq::mutex> >);
+    std::cout << "ONE-> ftsq::mutex " << duration << " ms" << std::endl;
 
-    stdmutex_duration = ftsq::measure<>::execution(
+    duration = ftsq::measure<>::execution(
+                producer_one<ftsq::queue_pop_one<int,ftsq::spinlock> >);
+    std::cout << "ONE-> ftsq::spnlk " << duration << " ms" << std::endl;
+
+
+    duration = ftsq::measure<>::execution(
                 producer_all<ftsq::queue_pop_all<int,std::mutex> >);
-    std::cout << "ALL-> std::mutex " << stdmutex_duration << " ms" << std::endl;
+    std::cout << "ALL-> std::mutex " << duration << " ms" << std::endl;
 
-    ftsqmutex_duration = ftsq::measure<>::execution(
-                producer_all<ftsq::queue_pop_all<int,std::mutex> >);
-    std::cout << "ALL-> ftsq::mutex " << ftsqmutex_duration << " ms" << std::endl;
+    duration = ftsq::measure<>::execution(
+                producer_all<ftsq::queue_pop_all<int,ftsq::mutex> >);
+    std::cout << "ALL-> ftsq::mutex " << duration << " ms" << std::endl;
+
+    duration = ftsq::measure<>::execution(
+                producer_all<ftsq::queue_pop_all<int,ftsq::spinlock> >);
+    std::cout << "ALL-> ftsq::spnlk " << duration << " ms" << std::endl;
 
     return 0;
 }

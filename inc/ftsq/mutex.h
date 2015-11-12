@@ -29,5 +29,24 @@ namespace ftsq
         std::atomic_int m_count;
         std::mutex m_mutex;
     }; //class mutex
+
+    class spinlock
+    {
+    public:
+        spinlock() { m_flag.clear(); }
+        spinlock(const spinlock&) = delete;
+        void operator=(const spinlock&) = delete;
+
+        void lock() {
+            while(m_flag.test_and_set(std::memory_order_acquire));
+        }
+
+        void unlock() {
+            m_flag.clear(std::memory_order_release);
+        }
+
+    private:
+        std::atomic_flag m_flag;
+    }; //class mutex
 }
 #endif // FTSQ_MUTEX_DOT_H
