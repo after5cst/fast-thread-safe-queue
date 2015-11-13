@@ -5,10 +5,13 @@ set(CMAKE_CXX_STANDARD 11)
 # to the root binary directory of the project as ${FTSQ_BINARY_DIR}.
 project (FTSQ)
 
-include_directories("inc")
+# Set the output executables to go to a single directory on the
+# build tree.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# Recurse into the "Hello" and "Demo" subdirectories. This does not actually
-# cause another cmake executable to run. The same process will walk through
-# the project's entire directory structure.
+#Automatically include this directory in all subprojects
+include_directories(inc)
+
+#And now go into the test directory to build test apps.
 add_subdirectory (test)
 

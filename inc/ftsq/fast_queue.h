@@ -2,8 +2,8 @@
 #define FTSQ_MUTEX_H
 
 #include "ftsq/mutex.h"
-#  include <vector>
-#  include <deque>
+#include <vector>
+#include <deque>
 
 namespace ftsq
 {
